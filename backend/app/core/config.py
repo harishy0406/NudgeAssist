@@ -25,6 +25,9 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: str = "http://localhost:3000"
+    # Permit local Next.js development regardless of whether it is opened via
+    # localhost, 127.0.0.1, or a fallback port selected by Next.js.
+    CORS_ORIGIN_REGEX: str = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
 
     class Config:
         env_file = ".env"

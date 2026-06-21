@@ -6,17 +6,19 @@ services:
     buildCommand: "cd backend && pip install -r requirements.txt"
     startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     envVars:
-      - key: MONGODB_URI
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: SUPABASE_JWT_SECRET
         sync: false
       - key: GEMINI_API_KEY
         sync: false
       - key: GROQ_API_KEY
         sync: false
-      - key: JWT_SECRET
-        generateValue: true
-      - key: JWT_ALGORITHM
-        value: HS256
       - key: CORS_ORIGINS
         sync: false # Set this to your frontend URL in the dashboard (e.g., https://nudgeassist.vercel.app)
+      - key: CORS_ORIGIN_REGEX
+        value: "^https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?$"
       - key: PYTHON_VERSION
         value: 3.11.0

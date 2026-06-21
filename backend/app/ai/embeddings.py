@@ -13,8 +13,9 @@ async def get_embedding(text: str) -> Optional[List[float]]:
             import google.generativeai as genai
             genai.configure(api_key=settings.GEMINI_API_KEY)
             result = genai.embed_content(
-                model="models/text-embedding-004",
+                model="models/gemini-embedding-2",
                 content=text,
+                output_dimensionality=768,
             )
             return result["embedding"]
         except Exception as e:

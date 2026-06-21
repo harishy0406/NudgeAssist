@@ -28,27 +28,39 @@ export default function CounterAnimation({
   const counterRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
+  const currentValue = useRef(0);
+
   useEffect(() => {
-    if (!counterRef.current || hasAnimated.current) return;
+    if (!counterRef.current) return;
+
+    const runAnimation = () => {
+      hasAnimated.current = true;
+      const obj = { value: currentValue.current };
+      anime({
+        targets: obj,
+        value: target,
+        duration: duration,
+        easing: 'easeOutExpo',
+        round: decimals === 0 ? 1 : Math.pow(10, decimals),
+        update: () => {
+          currentValue.current = obj.value;
+          if (counterRef.current) {
+            counterRef.current.textContent =
+              prefix + obj.value.toFixed(decimals) + suffix;
+          }
+        },
+      });
+    };
+
+    if (hasAnimated.current) {
+      runAnimation();
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          hasAnimated.current = true;
-          const obj = { value: 0 };
-          anime({
-            targets: obj,
-            value: target,
-            duration: duration,
-            easing: 'easeOutExpo',
-            round: decimals === 0 ? 1 : Math.pow(10, decimals),
-            update: () => {
-              if (counterRef.current) {
-                counterRef.current.textContent =
-                  prefix + obj.value.toFixed(decimals) + suffix;
-              }
-            },
-          });
+          runAnimation();
           observer.disconnect();
         }
       },

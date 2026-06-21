@@ -43,7 +43,9 @@ async def get_summary(
     ).where(Ticket.status.in_(["Resolved", "Closed"]))
     res_result = await db.execute(res_stmt)
     avg_seconds = res_result.scalar() or 0
-    avg_resolution = avg_seconds / 3600.0
+    # PostgreSQL AVG returns Decimal; normalize before float arithmetic and
+    # JSON serialization.
+    avg_resolution = float(avg_seconds) / 3600.0
 
     # 4. AI categorization accuracy (% tickets where agent didn't override AI suggestion)
     ai_stmt = select(

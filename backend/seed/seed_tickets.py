@@ -1,8 +1,8 @@
 """
 Seed script — populates the PostgreSQL database with demo profiles and realistic resolved tickets.
 Run: python -m seed.seed_tickets (from backend/ directory)
-Note: These demo users cannot be logged into via Supabase Auth. They exist to populate the dashboard.
-To log in, sign up normally via the frontend.
+The demo users are also created in Supabase Auth and can log in with the
+credentials documented in the project README.
 """
 
 import asyncio
@@ -109,11 +109,15 @@ async def seed():
                 INSERT INTO auth.users (
                     id, instance_id, aud, role, email, encrypted_password, 
                     email_confirmed_at, raw_app_meta_data, raw_user_meta_data, 
-                    created_at, updated_at, confirmation_token
+                    created_at, updated_at, confirmation_token, recovery_token,
+                    email_change_token_new, email_change, phone_change,
+                    phone_change_token, email_change_token_current,
+                    reauthentication_token
                 ) VALUES (
                     :id, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 
                     :email, crypt('demo123', gen_salt('bf')), now(), 
                     '{"provider":"email","providers":["email"]}', '{}', now(), now(), ''
+                    , '', '', '', '', '', '', '', ''
                 )
             """), {
                 "id": u["id"],
@@ -243,7 +247,7 @@ async def seed():
             print(f"   ⚠️  Embeddings unavailable: {e}")
 
         print(f"\n🎉 Seed complete! {len(SEED_TICKETS)} tickets, {len(DEMO_USERS)} dummy profiles created.")
-        print("Note: Demo users created here cannot log in via Supabase. Sign up via the frontend to test login.")
+        print("Demo login credentials are listed in the project README.")
 
     await engine.dispose()
 

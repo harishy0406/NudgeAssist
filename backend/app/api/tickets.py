@@ -58,7 +58,9 @@ def ticket_to_response(ticket: Ticket, creator_name: str = None, assignee_name: 
         ai_suggested_category=ticket.ai_suggested_category,
         ai_suggested_urgency=ticket.ai_suggested_urgency,
         resolution_note=ticket.resolution_note,
-        similar_tickets=ticket.similar_tickets,
+        # Similar tickets are computed on demand by /tickets/similar and are
+        # not persisted on the Ticket model.
+        similar_tickets=None,
         created_at=ticket.created_at,
         updated_at=ticket.updated_at,
     )
