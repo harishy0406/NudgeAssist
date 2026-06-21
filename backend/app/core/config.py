@@ -4,6 +4,7 @@ Loads environment variables via pydantic-settings.
 """
 
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from typing import Optional
 
 
@@ -11,6 +12,17 @@ class Settings(BaseSettings):
     # Supabase
     SUPABASE_URL: str = "https://your-project.supabase.co"
     SUPABASE_DB_URL: str = "postgresql+asyncpg://postgres:pass@db.your-project.supabase.co:5432/postgres"
+
+    @field_validator("SUPABASE_DB_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str) -> str:
+        if isinstance(v, str):
+            if v.startswith("postgresql://"):
+                return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+asyncpg://", 1)
+        return v
+    
     SUPABASE_JWT_SECRET: str = "your-supabase-jwt-secret"
 
     # LLM API Keys
